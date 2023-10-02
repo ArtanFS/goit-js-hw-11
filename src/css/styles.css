@@ -1,0 +1,63 @@
+.visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+}
+
+.select {
+  width: 240px;
+  margin-bottom: 25px;
+}
+
+.load {
+  width: 36px;
+  height: 36px;
+  border: 5px dotted #000;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 2.5s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  display: flex;
+  gap: 15px;
+  font-size: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+.cat-info {
+  display: flex;
+  gap: 25px;
+}
+
+.cat-desc {
+  width: 720px;
+}
+
+.cat-title {
+  font-size: 48px;
+  margin-top: 0;
+}
+
+.cat-text {
+  font-size: 24px;
+}
