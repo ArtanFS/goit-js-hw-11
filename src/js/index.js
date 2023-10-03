@@ -1,7 +1,7 @@
-import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
-import SlimSelect from 'slim-select';
-import 'slim-select/dist/slimselect.css';
+// import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const refs = {
   select: document.querySelector('.breed-select'),
