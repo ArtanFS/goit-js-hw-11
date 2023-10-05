@@ -1,68 +1,93 @@
-import { fetchByTitle } from './api.js';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import axios from 'axios';
 
-// const refs = {
-//   select: document.querySelector('.breed-select'),
-//   catInfo: document.querySelector('.cat-info'),
-//   loader: document.querySelector('.loader'),
-//   error: document.querySelector('.error'),
-// };
+const refs = {
+  form: document.querySelector('#search-form'),
+  search: document.querySelector('#search-form input'),
+  gallery: document.querySelector('.gallery'),
+  loadMoreBtn: document.querySelector('.load-more'),
+  // error: document.querySelector('.error'),
+};
 
-// refs.select.classList.toggle('visually-hidden');
+refs.loadMoreBtn.classList.add('visually-hidden');
 // refs.error.classList.toggle('visually-hidden');
 
-fetchByTitle('cat')
-  .then(data => {
-    // refs.select.innerHTML = createList(data);
-    // refs.select.classList.toggle('visually-hidden');
-    // refs.loader.classList.toggle('visually-hidden');
-    console.log(data);
-  })
-  .catch(err => {
-    // refs.loader.classList.toggle('visually-hidden');
-    errMsg();
+const param = {
+  baseURL: 'https://pixabay.com/api/',
+  params: {
+    key: '39799533-be43f3098008d0f2e0b6204fa',
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: true,
+    page: 1,
+    per_page: 40,
+    q: '',
+  },
+};
+
+const { params } = param;
+
+export function fetchByTitle(title) {
+  params.q = `${title}`;
+  return axios(param).then(({ data }) => {
+    return data;
   });
+}
 
-// refs.select.addEventListener('change', e => {
-//   refs.catInfo.classList.toggle('visually-hidden');
-//   refs.loader.classList.toggle('visually-hidden');
-//   fetchCatByBreed(e.target.value)
-//     .then(data => {
-//       refs.catInfo.innerHTML = createMarkup(data);
-//       refs.catInfo.classList.toggle('visually-hidden');
-//       refs.loader.classList.toggle('visually-hidden');
-//     })
-//     .catch(err => {
-//       refs.catInfo.classList.toggle('visually-hidden');
-//       refs.loader.classList.toggle('visually-hidden');
-//       errMsg();
-//     });
-// });
+refs.form.addEventListener('submit', e => {
+  e.preventDefault();
+  fetchByTitle(refs.search.value)
+    .then(data => {
+      refs.gallery.innerHTML = createMarkup(data);
+      loadMore1(data);
+    })
+    .catch(err => {
+      errMsg();
+    });
+});
 
-// function createList(arr) {
-//   const list = arr
-//     .map(({ id, name }) => `<option value="${id}">${name}</option>`)
-//     .join('');
-//   return '<option data-placeholder="true"></option>' + list;
-// }
+function loadMore1({ totalHits }) {
+  if (param.params.page * param.params.per_page < totalHits) {
+    refs.loadMoreBtn.classList.remove('visually-hidden');
+  } else {
+    refs.loadMoreBtn.classList.add('visually-hidden');
+  }
+}
 
-// function createMarkup(arr) {
-//   return arr
-//     .map(
-//       ({
-//         url,
-//         breeds: [{ name, description, temperament }],
-//       }) => `<img src="${url}" alt="${name}" height="360"/>
-//              <div class="cat-desc">
-//                <h1 class="cat-title">${name}</h1>
-//                <p class="cat-text">${description}</p>
-//                <p class="cat-text"><b>Temperament: </b>${temperament}</p>
-//              </div>`
-//     )
-//     .join('');
-// }
+function createMarkup(arr) {
+  // console.log({ total });
+  return arr.hits
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `<div class="photo-card">
+               <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+                <div class="info">
+                  <p class="info-item">
+                    <b>Likes</b>${likes}
+                  </p>
+                  <p class="info-item">
+                    <b>Views</b>${views}
+                  </p>
+                  <p class="info-item">
+                    <b>Comments</b>${comments}
+                  </p>
+                  <p class="info-item">
+                    <b>Downloads</b>${downloads}
+                  </p>
+                </div>
+             </div>`
+    )
+    .join('');
+}
 
 function errMsg() {
   Notify.failure('Oops! Something went wrong! Try reloading the page!', {
@@ -73,3 +98,5 @@ function errMsg() {
     useIcon: false,
   });
 }
+
+// page = 2 + 10;
