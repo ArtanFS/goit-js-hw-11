@@ -22,16 +22,16 @@ const param = {
     orientation: 'horizontal',
     safesearch: true,
     page: 1,
-    per_page: 40,
+    per_page: 5,
     q: '',
   },
 };
 
 const { params } = param;
 
-export function fetchByTitle(title) {
+async function fetchByTitle(title) {
   params.q = `${title}`;
-  return axios(param).then(({ data }) => {
+  return await axios(param).then(({ data }) => {
     return data;
   });
 }
@@ -48,8 +48,22 @@ refs.form.addEventListener('submit', e => {
     });
 });
 
+refs.loadMoreBtn.addEventListener('click', () => {
+  params.page += 1;
+  fetchByTitle(refs.search.value)
+    .then(data => {
+      refs.gallery.insertAdjacentHTML('beforeend', createMarkup(data));
+      loadMore1(data);
+    })
+    .catch(err => {
+      errMsg();
+    });
+});
+
+function foo(value) {}
+
 function loadMore1({ totalHits }) {
-  if (param.params.page * param.params.per_page < totalHits) {
+  if (params.page * params.per_page < totalHits) {
     refs.loadMoreBtn.classList.remove('visually-hidden');
   } else {
     refs.loadMoreBtn.classList.add('visually-hidden');
@@ -98,5 +112,3 @@ function errMsg() {
     useIcon: false,
   });
 }
-
-// page = 2 + 10;
