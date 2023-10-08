@@ -21,8 +21,7 @@ const param = {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
-    page: 1,
-    per_page: 5,
+    per_page: 8,
     q: '',
   },
 };
@@ -38,6 +37,7 @@ async function fetchByTitle(title) {
 
 refs.form.addEventListener('submit', e => {
   e.preventDefault();
+  params.page = 1;
   fetchByTitle(refs.search.value)
     .then(data => {
       refs.gallery.innerHTML = createMarkup(data);
@@ -59,8 +59,6 @@ refs.loadMoreBtn.addEventListener('click', () => {
       errMsg();
     });
 });
-
-function foo(value) {}
 
 function loadMore1({ totalHits }) {
   if (params.page * params.per_page < totalHits) {

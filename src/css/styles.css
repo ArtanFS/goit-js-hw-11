@@ -76,6 +76,18 @@ body {
   top: 50%; */
 }
 
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  /* width: 100%; */
+}
+
+.photo-card {
+  width: calc((100% - 48px) / 4);
+  /* width: 256px; */
+}
+
 /*.load {
   width: 36px;
   height: 36px;
