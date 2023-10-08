@@ -28,20 +28,33 @@ const param = {
 
 const { params } = param;
 
+// async function fetchByTitle(title) {
+//   params.q = `${title}`;
+//   return await axios(param).then(({ data }) => {
+//     return data;
+//   });
+// }
+
 async function fetchByTitle(title) {
   params.q = `${title}`;
-  return await axios(param).then(({ data }) => {
-    return data;
-  });
+  const resp = await axios(param);
+  console.log(resp);
+  return resp.data;
+  // return Response.data;
 }
 
 refs.form.addEventListener('submit', e => {
   e.preventDefault();
   params.page = 1;
-  fetchByTitle(refs.search.value)
+  const searchData = refs.search.value.trim();
+  fetchByTitle(searchData)
     .then(data => {
-      refs.gallery.innerHTML = createMarkup(data);
-      loadMore1(data);
+      if (searchData || data.totalHits > 0) {
+        refs.gallery.innerHTML = createMarkup(data);
+        loadMore1(data);
+      } else {
+        errMsg1();
+      }
     })
     .catch(err => {
       errMsg();
@@ -50,7 +63,7 @@ refs.form.addEventListener('submit', e => {
 
 refs.loadMoreBtn.addEventListener('click', () => {
   params.page += 1;
-  fetchByTitle(refs.search.value)
+  fetchByTitle(refs.search.value.trim())
     .then(data => {
       refs.gallery.insertAdjacentHTML('beforeend', createMarkup(data));
       loadMore1(data);
@@ -109,4 +122,17 @@ function errMsg() {
     timeout: 5000,
     useIcon: false,
   });
+}
+
+function errMsg1() {
+  Notify.failure(
+    'Sorry, there are no images matching your search query. Please try again.',
+    {
+      position: 'center-top',
+      width: '600px',
+      fontSize: '24px',
+      timeout: 5000,
+      useIcon: false,
+    }
+  );
 }
