@@ -81,9 +81,9 @@ refs.loadMoreBtn.addEventListener('click', () => {
       createSimpleLightBox();
       smoothScroll();
     })
-    .catch(() => {
+    .catch(err => {
       Notify.failure(
-        'Oops! Something went wrong again! Try reloading the page!'
+        `Oops! Something went wrong again! Try reloading the page! Error: ${err.message}`
       );
     });
 });
@@ -134,7 +134,7 @@ function displayloadMoreBtn({ totalHits }) {
 }
 
 function createSimpleLightBox() {
-  lightbox = new SimpleLightbox('.photo-card a', {
+  const lightbox = new SimpleLightbox('.photo-card a', {
     closeText: '',
     showCounter: false,
     disableRightClick: true,
