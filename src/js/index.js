@@ -15,7 +15,7 @@ const refs = {
 refs.loadMoreBtn.classList.add('visually-hidden');
 
 const param = {
-  baseURL: 'https://pixabay.com/api/',
+  baseURL: 'https://pixabay.com/55api/',
   params: {
     key: '39799533-be43f3098008d0f2e0b6204fa',
     image_type: 'photo',
@@ -39,7 +39,6 @@ async function fetchByTitle(title) {
   params.q = `${title}`;
   const resp = await axios(param);
   return resp.data;
-  // return Response.data;
 }
 
 refs.form.addEventListener('submit', e => {
@@ -59,10 +58,9 @@ refs.form.addEventListener('submit', e => {
         Notify.success(`Hooray! We found ${data.totalHits} images.`);
         displayloadMoreBtn(data);
         createSimpleLightBox();
-        // smoothScroll();
       }
     })
-    .catch(err => {
+    .catch(() => {
       Notify.failure('Oops! Something went wrong! Try reloading the page!');
     });
 });
@@ -77,8 +75,10 @@ refs.loadMoreBtn.addEventListener('click', () => {
       createSimpleLightBox();
       smoothScroll();
     })
-    .catch(err => {
-      Notify.failure('Oops! Something went wrong! Try reloading the page!');
+    .catch(() => {
+      Notify.failure(
+        'Oops! Something went wrong again! Try reloading the page!'
+      );
     });
 });
 
