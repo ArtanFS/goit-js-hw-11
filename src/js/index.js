@@ -28,18 +28,22 @@ const param = {
 
 const { params } = param;
 
-// async function fetchByTitle(title) {
-//   params.q = `${title}`;
-//   return await axios(param).then(({ data }) => {
-//     return data;
-//   });
-// }
-
 async function fetchByTitle(title) {
   params.q = `${title}`;
-  const resp = await axios(param);
-  return resp.data;
+  return await axios(param)
+    .then(({ data }) => {
+      return data;
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
 }
+
+// async function fetchByTitle(title) {
+//   params.q = `${title}`;
+//   const resp = await axios(param);
+//   return resp.data;
+// }
 
 refs.form.addEventListener('submit', e => {
   e.preventDefault();
@@ -60,8 +64,10 @@ refs.form.addEventListener('submit', e => {
         createSimpleLightBox();
       }
     })
-    .catch(() => {
-      Notify.failure('Oops! Something went wrong! Try reloading the page!');
+    .catch(err => {
+      Notify.failure(
+        `Oops! Something went wrong! Try reloading the page! Error: ${err.message}`
+      );
     });
 });
 
@@ -133,7 +139,6 @@ function createSimpleLightBox() {
     showCounter: false,
     disableRightClick: true,
   });
-  console.log(lightbox);
 }
 
 function smoothScroll() {
