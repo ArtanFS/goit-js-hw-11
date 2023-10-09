@@ -8,11 +8,11 @@ const refs = {
   search: document.querySelector('#search-form input'),
   gallery: document.querySelector('.gallery'),
   loadMoreBtn: document.querySelector('.load-more'),
-  // error: document.querySelector('.error'),
 };
 
+// const lightbox = new SimpleLightbox('.photo-card a');
+
 refs.loadMoreBtn.classList.add('visually-hidden');
-// refs.error.classList.toggle('visually-hidden');
 
 const param = {
   baseURL: 'https://pixabay.com/api/',
@@ -21,7 +21,7 @@ const param = {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
-    per_page: 8,
+    per_page: 40,
     q: '',
   },
 };
@@ -38,7 +38,6 @@ const { params } = param;
 async function fetchByTitle(title) {
   params.q = `${title}`;
   const resp = await axios(param);
-  console.log(resp);
   return resp.data;
   // return Response.data;
 }
@@ -49,15 +48,22 @@ refs.form.addEventListener('submit', e => {
   const searchData = refs.search.value.trim();
   fetchByTitle(searchData)
     .then(data => {
-      if (searchData || data.totalHits > 0) {
-        refs.gallery.innerHTML = createMarkup(data);
-        loadMore1(data);
+      if (searchData === '' || data.totalHits === 0) {
+        refs.loadMoreBtn.classList.add('visually-hidden');
+        refs.gallery.innerHTML = '';
+        Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
       } else {
-        errMsg1();
+        refs.gallery.innerHTML = createMarkup(data);
+        Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        displayloadMoreBtn(data);
+        createSimpleLightBox();
+        // smoothScroll();
       }
     })
     .catch(err => {
-      errMsg();
+      Notify.failure('Oops! Something went wrong! Try reloading the page!');
     });
 });
 
@@ -66,23 +72,17 @@ refs.loadMoreBtn.addEventListener('click', () => {
   fetchByTitle(refs.search.value.trim())
     .then(data => {
       refs.gallery.insertAdjacentHTML('beforeend', createMarkup(data));
-      loadMore1(data);
+      displayloadMoreBtn(data);
+      lightbox.destroy();
+      createSimpleLightBox();
+      smoothScroll();
     })
     .catch(err => {
-      errMsg();
+      Notify.failure('Oops! Something went wrong! Try reloading the page!');
     });
 });
 
-function loadMore1({ totalHits }) {
-  if (params.page * params.per_page < totalHits) {
-    refs.loadMoreBtn.classList.remove('visually-hidden');
-  } else {
-    refs.loadMoreBtn.classList.add('visually-hidden');
-  }
-}
-
 function createMarkup(arr) {
-  // console.log({ total });
   return arr.hits
     .map(
       ({
@@ -94,45 +94,54 @@ function createMarkup(arr) {
         comments,
         downloads,
       }) => `<div class="photo-card">
-               <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-                <div class="info">
-                  <p class="info-item">
-                    <b>Likes</b>${likes}
-                  </p>
-                  <p class="info-item">
-                    <b>Views</b>${views}
-                  </p>
-                  <p class="info-item">
-                    <b>Comments</b>${comments}
-                  </p>
-                  <p class="info-item">
-                    <b>Downloads</b>${downloads}
-                  </p>
-                </div>
-             </div>`
+              <a href="${largeImageURL}">         
+                <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+              </a>
+              <div class="info">
+                <p class="info-item">
+                  <b>Likes</b>${likes}
+                </p>
+                <p class="info-item">
+                  <b>Views</b>${views}
+                </p>
+                <p class="info-item">
+                  <b>Comments</b>${comments}
+                </p>
+                <p class="info-item">
+                  <b>Downloads</b>${downloads}
+                </p>
+              </div>
+            </div>`
     )
     .join('');
 }
 
-function errMsg() {
-  Notify.failure('Oops! Something went wrong! Try reloading the page!', {
-    position: 'center-top',
-    width: '600px',
-    fontSize: '24px',
-    timeout: 5000,
-    useIcon: false,
-  });
+function displayloadMoreBtn({ totalHits }) {
+  if (params.page * params.per_page < totalHits) {
+    refs.loadMoreBtn.classList.remove('visually-hidden');
+  } else {
+    refs.loadMoreBtn.classList.add('visually-hidden');
+    Notify.failure(
+      'We&apos;re sorry, but you&apos;ve reached the end of search results.'
+    );
+  }
 }
 
-function errMsg1() {
-  Notify.failure(
-    'Sorry, there are no images matching your search query. Please try again.',
-    {
-      position: 'center-top',
-      width: '600px',
-      fontSize: '24px',
-      timeout: 5000,
-      useIcon: false,
-    }
-  );
+function createSimpleLightBox() {
+  lightbox = new SimpleLightbox('.photo-card a', {
+    closeText: '',
+    showCounter: false,
+    disableRightClick: true,
+  });
+  console.log(lightbox);
+}
+
+function smoothScroll() {
+  const { height: cardHeight } =
+    refs.gallery.firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
