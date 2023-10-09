@@ -10,8 +10,6 @@ const refs = {
   loadMoreBtn: document.querySelector('.load-more'),
 };
 
-// const lightbox = new SimpleLightbox('.photo-card a');
-
 refs.loadMoreBtn.classList.add('visually-hidden');
 
 const param = {
@@ -26,24 +24,15 @@ const param = {
   },
 };
 
+let lightbox = new SimpleLightbox('.photo-card a');
+
 const { params } = param;
 
 async function fetchByTitle(title) {
   params.q = `${title}`;
-  return await axios(param)
-    .then(({ data }) => {
-      return data;
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
+  const resp = await axios(param);
+  return resp.data;
 }
-
-// async function fetchByTitle(title) {
-//   params.q = `${title}`;
-//   const resp = await axios(param);
-//   return resp.data;
-// }
 
 refs.form.addEventListener('submit', e => {
   e.preventDefault();
@@ -134,7 +123,7 @@ function displayloadMoreBtn({ totalHits }) {
 }
 
 function createSimpleLightBox() {
-  const lightbox = new SimpleLightbox('.photo-card a', {
+  lightbox = new SimpleLightbox('.photo-card a', {
     closeText: '',
     showCounter: false,
     disableRightClick: true,
