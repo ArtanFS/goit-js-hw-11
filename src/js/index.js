@@ -10,8 +10,6 @@ const refs = {
   loadMoreBtn: document.querySelector('.load-more'),
 };
 
-refs.loadMoreBtn.classList.add('visually-hidden');
-
 const param = {
   baseURL: 'https://pixabay.com/api/',
   params: {
@@ -24,8 +22,6 @@ const param = {
   },
 };
 
-let lightbox = new SimpleLightbox('.photo-card a');
-
 const { params } = param;
 
 async function fetchByTitle(title) {
@@ -33,6 +29,9 @@ async function fetchByTitle(title) {
   const resp = await axios(param);
   return resp.data;
 }
+
+let lightbox = new SimpleLightbox('.photo-card a');
+refs.loadMoreBtn.classList.add('visually-hidden');
 
 refs.form.addEventListener('submit', e => {
   e.preventDefault();
