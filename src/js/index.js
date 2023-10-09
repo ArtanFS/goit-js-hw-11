@@ -15,7 +15,7 @@ const refs = {
 refs.loadMoreBtn.classList.add('visually-hidden');
 
 const param = {
-  baseURL: 'https://pixabay.com/55api/',
+  baseURL: 'https://pixabay.com/api/',
   params: {
     key: '39799533-be43f3098008d0f2e0b6204fa',
     image_type: 'photo',
