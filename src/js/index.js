@@ -87,7 +87,6 @@ function createSimpleLightBox() {
 function smoothScroll() {
   const { height: cardHeight } =
     refs.gallery.firstElementChild.getBoundingClientRect();
-  console.log(cardHeight);
 
   window.scrollBy({
     top: cardHeight * 2,
